@@ -1,0 +1,11 @@
+Installation:
+    sudo pip install timeparse
+
+usage:
+    >>> import argparse
+    >>> from timeparse import ParseDateTime
+    >>> parser = argparse.ArgumentParser()
+    >>> parser.add_argument('--datetime', action=ParseDateTime, nargs='+')
+    >>> parser.parse_args("--datetime 2.4.2013 23:02".split()).datetime
+    datetime.datetime(2013, 4, 2, 23, 2)
+
