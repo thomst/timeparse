@@ -10,7 +10,7 @@ setup(
     url = "https://github.com/thomst/timeparse",
     download_url = "https://pypi.python.org/packages/source/t/timeparse/timeparse-{version}.tar.gz".format(version=VERSION),
     description = 'timeparse is an extension for argparse to parse commandline-arguments as objects of the datetime-module.',
-    long_description = "timeparse provides several classes that can be passed to the argparse.ArgumentParser.add_argument-method as action (s. documentation of argparse). With this classes an argument is parsed as date-, time-, datetime- or timedelta-object of the datetime-module.",
+    long_description = "timeparse is an extension for argparse. It parses commandline-arguments as time-, datetime-, date- or timedelta-objects of the datetime-module. Just use his classes as action-parameter for the add_argument-method of an argument-parser.",
     py_modules = ["timeparse"],
     classifiers=[
         'Development Status :: 4 - Beta',
