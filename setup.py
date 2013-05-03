@@ -1,17 +1,18 @@
+import os
 from distutils.core import setup
 
-VERSION = "0.2"
+VERSION = "0.3"
 
 setup(
-    name = "timeparse", 
+    name = "timeparser", 
     version = VERSION, 
     author = "Thomas Leichtfuss", 
     author_email = "thomaslfuss@gmx.de",
-    url = "https://github.com/thomst/timeparse",
-    download_url = "https://pypi.python.org/packages/source/t/timeparse/timeparse-{version}.tar.gz".format(version=VERSION),
-    description = 'timeparse is an extension for argparse to parse commandline-arguments as objects of the datetime-module.',
-    long_description = "timeparse is an extension for argparse. It parses commandline-arguments as time-, datetime-, date- or timedelta-objects of the datetime-module. Just use his classes as action-parameter for the add_argument-method of an argument-parser.",
-    py_modules = ["timeparse"],
+    url = "https://github.com/thomst/timeparser",
+    download_url = "https://pypi.python.org/packages/source/t/timeparser/timeparser-{version}.tar.gz".format(version=VERSION),
+    description = 'A python-module to parse strings to time-, date-, datetime- or timedelta-objects. Which formats are accepted is configurable. The module also provides classes to use with the argparse-module for parsing command-line arguments.',
+    long_description = open('README.rst').read() if os.path.isfile('README.rst') else str(),
+    py_modules = ["timeparser"],
     classifiers=[
         'Development Status :: 4 - Beta',
         'Intended Audience :: Developers',
@@ -22,5 +23,5 @@ setup(
         'Programming Language :: Python :: 2.7',
     ],
     license='GPL',
-    keywords='argparse datetime',
+    keywords='parser parse datetime time strings',
 )

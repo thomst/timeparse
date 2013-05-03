@@ -1,19 +1,20 @@
-timeparse
-=========
+timeparser
+==========
 
-timeparse is an extension for argparse. It parses commandline-arguments as time-, datetime-, date- or timedelta-objects of the datetime-module. Just use his classes as action-parameter for the add_argument-method of an argument-parser.
-
+A python-module to parse strings to time-, date-, datetime- or timedelta-objects.
+Which formats are accepted is configurable. The module also provides classes to
+use with the argparse-module for parsing command-line arguments.
 
 Latest Version
 --------------
-The latest version of this project can be found at : http://github.com/thomst/timeparse.
+The latest version of this project can be found at : http://github.com/thomst/timeparser.
 
 
 Installation
 ------------
 * Option 1 : Install via pip ::
 
-    pip install timeparse
+    pip install timeparser
 
 * Option 2 : If you have downloaded the source ::
 
@@ -24,20 +25,34 @@ Documentation
 -------------
 How to use? ::
 
-    import argparse
-    from timeparse import ParseDateTime
+    >>> import timeparser
+    >>>
+    >>> timeparser.parsedate('24.4.13')
+    datetime.date(2013, 4, 24)
+    >>>
+    >>> timeparser.parsedate('24 Apr 2013')
+    datetime.date(2013, 4, 24)
+    >>>
+    >>> timeparser.parsetime('234405')
+    datetime.time(23, 44, 5)
+    >>>
+    >>> timeparser.TimeFormats.config(allow_no_sep=False)
+    >>> timeparser.parsetime('234405')
+    Traceback (most recent call last):
+      File "<stdin>", line 1, in <module>
+      File "timeparser.py", line 398, in parsetime
+        raise ValueError("couldn't parse %s as time" % string)
+    ValueError: couldn't parse 234405 as time
+    >>>
+    >>> timeparser.parsedatetime('24-04-13_23:44:05')
+    datetime.datetime(2013, 4, 24, 23, 44, 5)
 
-    parser = argparse.ArgumentParser()
-    parser.add_argument('--datetime', action=ParseDateTime, nargs='+')
-
-    parser.parse_args("--datetime 2.4.2013 23:02".split()).datetime
-    #this is what you get: datetime.datetime(2013, 4, 2, 23, 2)
 
 
 Reporting Bugs
 --------------
 Please report bugs at github issue tracker:
-https://github.com/thomst/timeparse/issues
+https://github.com/thomst/timeparser/issues
 
 
 Author
