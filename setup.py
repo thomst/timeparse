@@ -4,15 +4,15 @@ from distutils.core import setup
 VERSION = "0.3"
 
 setup(
-    name = "timeparser", 
+    name = "timeparse", 
     version = VERSION, 
     author = "Thomas Leichtfuss", 
     author_email = "thomaslfuss@gmx.de",
-    url = "https://github.com/thomst/timeparser",
-    download_url = "https://pypi.python.org/packages/source/t/timeparser/timeparser-{version}.tar.gz".format(version=VERSION),
+    url = "https://github.com/thomst/timeparse",
+    download_url = "https://pypi.python.org/packages/source/t/timeparse/timeparse-{version}.tar.gz".format(version=VERSION),
     description = 'A python-module to parse strings to time-, date-, datetime- or timedelta-objects. Which formats are accepted is configurable. The module also provides classes to use with the argparse-module for parsing command-line arguments.',
     long_description = open('README.rst').read() if os.path.isfile('README.rst') else str(),
-    py_modules = ["timeparser"],
+    py_modules = ["timeparse"],
     classifiers=[
         'Development Status :: 4 - Beta',
         'Intended Audience :: Developers',

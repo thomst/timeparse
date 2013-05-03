@@ -1,48 +1,48 @@
 import unittest
 import datetime
-import timeparser
+import timeparse
 import argparse
 
 from argparse import ArgumentError
 
-from timeparser import AppendTimeOrDatetime
-from timeparser import ParseTimeOrDatetime
-from timeparser import ParseDatetime
-from timeparser import ParseTimedelta
-from timeparser import ParseDate
-from timeparser import ParseTime
+from timeparse import AppendTimeOrDatetime
+from timeparse import ParseTimeOrDatetime
+from timeparse import ParseDatetime
+from timeparse import ParseTimedelta
+from timeparse import ParseDate
+from timeparse import ParseTime
 
 
 class ParserTests(unittest.TestCase):
     def test_type(self):
-        self.assertIsInstance(timeparser.parsetime('23:44'), datetime.time)
-        self.assertIsInstance(timeparser.parsedate('24.3.2013'), datetime.date)
-        self.assertIsInstance(timeparser.parsedatetime('24.3.2013,23:44'), datetime.datetime)
-        self.assertIsInstance(timeparser.parsetimedelta('24.3.2013,23:44'), datetime.timedelta)
+        self.assertIsInstance(timeparse.parsetime('23:44'), datetime.time)
+        self.assertIsInstance(timeparse.parsedate('24.3.2013'), datetime.date)
+        self.assertIsInstance(timeparse.parsedatetime('24.3.2013,23:44'), datetime.datetime)
+        self.assertIsInstance(timeparse.parsetimedelta('24.3.2013,23:44'), datetime.timedelta)
 
     def test_exceptions(self):
-        self.assertRaises(ValueError, timeparser.parsetime, '23;44')
-        self.assertRaises(ValueError, timeparser.parsedate, '2013-4.24')
-        self.assertRaises(ValueError, timeparser.parsedatetime, '13.04.24#23:44')
-        self.assertRaises(ValueError, timeparser.parsetime, str())
-        self.assertRaises(TypeError, timeparser.parsedate, None)
-        self.assertRaises(TypeError, timeparser.parsedatetime, None)
-        self.assertRaises(TypeError, timeparser.parsetimedelta, None)
-        timeparser.TimeFormats.config(allow_no_sep=False)
-        self.assertRaises(ValueError, timeparser.parsetime, '2344')
-        timeparser.DateFormats.config(allow_month_name=False)
-        self.assertRaises(ValueError, timeparser.parsedate, '24 Apr 2013')
+        self.assertRaises(ValueError, timeparse.parsetime, '23;44')
+        self.assertRaises(ValueError, timeparse.parsedate, '2013-4.24')
+        self.assertRaises(ValueError, timeparse.parsedatetime, '13.04.24#23:44')
+        self.assertRaises(ValueError, timeparse.parsetime, str())
+        self.assertRaises(TypeError, timeparse.parsedate, None)
+        self.assertRaises(TypeError, timeparse.parsedatetime, None)
+        self.assertRaises(TypeError, timeparse.parsetimedelta, None)
+        timeparse.TimeFormats.config(allow_no_sep=False)
+        self.assertRaises(ValueError, timeparse.parsetime, '2344')
+        timeparse.DateFormats.config(allow_month_name=False)
+        self.assertRaises(ValueError, timeparse.parsedate, '24 Apr 2013')
 
     def test_parsetime(self):
-        parser = timeparser.parsetime
+        parser = timeparse.parsetime
         time = datetime.time
         self.assertEqual(parser('2344'), time(23,44))
 
     def test_parsedate(self):
-        parser = timeparser.parsedate
+        parser = timeparse.parsedate
         date = datetime.date
-        timeparser.TimeFormats.config(allow_no_sep=True)
-        timeparser.DateFormats.config(allow_month_name=True)
+        timeparse.TimeFormats.config(allow_no_sep=True)
+        timeparse.DateFormats.config(allow_month_name=True)
 
         self.assertEqual(parser('24032013'), date(2013,3,24))
         self.assertEqual(parser('24 Apr 2013'), date(2013,4,24))
@@ -58,12 +58,12 @@ class ParserTests(unittest.TestCase):
         self.assertEqual(parser('243', today=today), date(today.year, 3, 24))
 
     def test_parsedatetime(self):
-        parser = timeparser.parsedatetime
+        parser = timeparse.parsedatetime
         dtime = datetime.datetime
         self.assertEqual(parser('24.3.2013,23:44'), dtime(2013,3,24,23,44))
 
     def test_parsetimedelta(self):
-        parser = timeparser.parsetimedelta
+        parser = timeparse.parsetimedelta
         delta = datetime.timedelta
         self.assertEqual(parser('w3 h4 s20'), delta(weeks=3, hours=4, seconds=20))
         self.assertEqual(parser('w3 h4 s20', 'min'), delta(weeks=3, hours=4, seconds=20))
@@ -83,7 +83,7 @@ class TestTimeParser(unittest.TestCase):
             nargs='+',
             )
         self.assertEqual(datetime.timedelta(weeks=-20, hours=-4), self.parser.parse_args('--weeks -20 0 -4'.split()).weeks)
-        self.assertRaises(SystemExit, self.parser.parse_args, ('--weeks 20z 0 -4'.split()))
+        self.assertRaises(SystemExit, self.parser.parse_args, ('--weeks 20h 10 4'.split()))
 
     def test_ParseTime(self):
         self.parser.add_argument(

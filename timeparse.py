@@ -533,12 +533,12 @@ class ParseTime(argparse.Action, TimeArgsMixin):
 
     usage:
         import argparse
-        import timeparser
+        import timeparse
 
         parser = argparse.ArgumentParser(prog='PROG')
         parser.add_argument(
             '--time',
-            action=timeparser.ParseTime
+            action=timeparse.ParseTime
             )
         parser.parse_args('--time 23:20:33'.split()).time
         #this will be: datetime.time(23, 20, 33)
@@ -555,12 +555,12 @@ class ParseDate(argparse.Action, TimeArgsMixin):
 
     usage:
         import argparse
-        import timeparser
+        import timeparse
 
         parser = argparse.ArgumentParser(prog='PROG')
         parser.add_argument(
             '--date',
-            action=timeparser.ParseDate
+            action=timeparse.ParseDate
             )
         parser.parse_args('--date 24/04/2013'.split()).date
         #this will be: datetime.date(2013, 4, 24)
@@ -577,12 +577,12 @@ class ParseTimedelta(argparse.Action, TimeArgsMixin):
 
     usage:
         import argparse
-        import timeparser
+        import timeparse
 
         parser = argparse.ArgumentParser(prog='PROG')
         parser.add_argument(
             '--days',
-            action=timeparser.ParseTimedelta
+            action=timeparse.ParseTimedelta
             )
         parser.parse_args('--days 20 12 4'.split()).days
         #this will be: datetime.timedelta(20, 43440).
@@ -603,12 +603,12 @@ class ParseDatetime(argparse.Action, TimeArgsMixin):
 
     usage:
         import argparse
-        import timeparser
+        import timeparse
 
         parser = argparse.ArgumentParser(prog='PROG')
         parser.add_argument(
             '--datetime',
-            action=timeparser.ParseDatetime
+            action=timeparse.ParseDatetime
             )
         parser.parse_args('--datetime 24/04/2013 23:22'.split()).datetime
         #this will be: datetime.datetime(2013, 4, 24, 23, 22)
@@ -626,12 +626,12 @@ class ParseTimeOrDatetime(argparse.Action, TimeArgsMixin):
 
     usage:
         import argparse
-        import timeparser
+        import timeparse
 
         parser = argparse.ArgumentParser(prog='PROG')
         parser.add_argument(
             '--time-or-datetime',
-            action=timeparser.ParseTimeOrDatetime
+            action=timeparse.ParseTimeOrDatetime
             )
         parser.parse_args('--time-or-datetime 24/04/2013 23:22'.split()).time_or_datetime
         #this will be: datetime.datetime(2013, 4, 24, 23, 22)
@@ -651,12 +651,12 @@ class AppendTime(argparse.Action, TimeArgsMixin):
 
     usage:
         import argparse
-        import timeparser
+        import timeparse
 
         parser = argparse.ArgumentParser(prog='PROG')
         parser.add_argument(
             '--time',
-            action=timeparser.ParseTime
+            action=timeparse.ParseTime
             )
         parser.parse_args('--time 23:20:33 --time 22:20'.split()).time
         #this will be: [datetime.time(23, 20, 33), datetime.time(22, 20)]
@@ -674,12 +674,12 @@ class AppendDate(argparse.Action, TimeArgsMixin):
 
     usage:
         import argparse
-        import timeparser
+        import timeparse
 
         parser = argparse.ArgumentParser(prog='PROG')
         parser.add_argument(
             '--date',
-            action=timeparser.ParseTime
+            action=timeparse.ParseTime
             )
         parser.parse_args('--date 23.4.13 --date 24.4.13'.split()).date
         #this will be: [datetime.date(2013, 4, 23), datetime.date(2013, 4, 24)]
