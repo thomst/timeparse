@@ -106,6 +106,10 @@ class TestTimeParser(unittest.TestCase):
             )
         self.assertEqual(
             datetime.datetime(2013, 4, 22, 22, 3, 16),
+            self.parser.parse_args('--datetime 22.4_220316'.split()).datetime
+            )
+        self.assertEqual(
+            datetime.datetime(2013, 4, 22, 22, 3, 16),
             self.parser.parse_args('--datetime 22.4 220316'.split()).datetime
             )
 
@@ -134,6 +138,8 @@ class TestTimeParser(unittest.TestCase):
             [datetime.time(22, 3, 16), datetime.time(13, 3)],
             self.parser.parse_args('--datetime 220316 --datetime 1303'.split()).datetime
             )
+
+#following tests for deprecated classes:
 
     def test_ParseTimeDelta(self):
         self.parser.add_argument(
