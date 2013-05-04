@@ -1,9 +1,8 @@
 timeparse
 ==========
 
-A python-module to parse strings to time-, date-, datetime- or timedelta-objects.
-Which formats are accepted is configurable. The module also provides classes to
-use with the argparse-module for parsing command-line arguments.
+An argparse-extension for parsing command-line arguments as time-, date-,
+datetime-, or timedelta-objects.
 
 Latest Version
 --------------
@@ -24,30 +23,6 @@ Installation
 Documentation
 -------------
 How to use? ::
-
-    >>> import timeparse
-    >>>
-    >>> timeparse.parsedate('24.4.13')
-    datetime.date(2013, 4, 24)
-    >>>
-    >>> timeparse.parsedate('24 Apr 2013')
-    datetime.date(2013, 4, 24)
-    >>>
-    >>> timeparse.parsetime('234405')
-    datetime.time(23, 44, 5)
-    >>>
-    >>> timeparse.TimeFormats.config(allow_no_sep=False)
-    >>> timeparse.parsetime('234405')
-    Traceback (most recent call last):
-      File "<stdin>", line 1, in <module>
-      File "timeparse.py", line 398, in parsetime
-        raise ValueError("couldn't parse %s as time" % string)
-    ValueError: couldn't parse 234405 as time
-    >>>
-    >>> timeparse.parsedatetime('24-04-13_23:44:05')
-    datetime.datetime(2013, 4, 24, 23, 44, 5)
-
-or with argparse ::
 
     >>> import argparse
     >>> from timeparse import ParseDatetime
