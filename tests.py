@@ -141,7 +141,8 @@ class TestTimeParser(unittest.TestCase):
             action=timeparse.ParseTimeDelta,
             nargs='+',
             )
-        self.assertRaises(DeprecationWarning, self.parser.parse_args, ('--weeks -20 0 -4'.split()))
+        self.assertEqual(datetime.timedelta(weeks=-20, hours=-4), self.parser.parse_args('--weeks -20 0 -4'.split()).weeks)
+        self.assertRaises(SystemExit, self.parser.parse_args, ('--weeks 20h 10 4'.split()))
 
     def test_ParseDateTime(self):
         self.parser.add_argument(
@@ -149,7 +150,10 @@ class TestTimeParser(unittest.TestCase):
             action=timeparse.ParseDateTime,
             nargs='+',
             )
-        self.assertRaises(DeprecationWarning, self.parser.parse_args, ('--datetime 22.4 220316'.split()))
+        self.assertEqual(
+            datetime.datetime(2013, 4, 22, 22, 3, 16),
+            self.parser.parse_args('--datetime 22.4 220316'.split()).datetime
+            )
 
     def test_ParseDateTimeOrTime(self):
         self.parser.add_argument(
@@ -157,7 +161,14 @@ class TestTimeParser(unittest.TestCase):
             action=timeparse.ParseDateTimeOrTime,
             nargs='+',
             )
-        self.assertRaises(DeprecationWarning, self.parser.parse_args, ('--datetime 22.4 220316'.split()))
+        self.assertEqual(
+            datetime.datetime(2013, 4, 22, 22, 3, 16),
+            self.parser.parse_args('--datetime 22.4 220316'.split()).datetime
+            )
+        self.assertEqual(
+            datetime.time(22, 3, 16),
+            self.parser.parse_args('--datetime 220316'.split()).datetime
+            )
 
     def test_AppendDateTimeOrTime(self):
         self.parser.add_argument(
@@ -165,7 +176,10 @@ class TestTimeParser(unittest.TestCase):
             action=timeparse.AppendDateTimeOrTime,
             nargs='+',
             )
-        self.assertRaises(DeprecationWarning, self.parser.parse_args, ('--datetime 220316 --datetime 1303'.split()))
+        self.assertEqual(
+            [datetime.time(22, 3, 16), datetime.time(13, 3)],
+            self.parser.parse_args('--datetime 220316 --datetime 1303'.split()).datetime
+            )
 
 
 if __name__ == '__main__':

@@ -7,6 +7,8 @@ import subprocess
 import shlex
 import argparse
 
+import warnings
+warnings.simplefilter('default')
 
 DELTA_KEYS = ('weeks', 'days', 'hours', 'minutes', 'seconds')
 
@@ -738,14 +740,14 @@ class ParseTimeDelta(argparse.Action, TimeArgsMixin, DeprecationClasses):
     Like ParseTimedelta with support for multiple use of arguments.
     """
     def __call__(self, parser, namespace, values, option_string=None):
-        raise DeprecationWarning(self.MSG % (
+        warnings.warn(self.MSG % (
             'timeparse.ParseTimeDelta',
             'timeparse.ParseTimedelta'
-            ))
+            ), DeprecationWarning)
         value = ' '.join(values) if isinstance(values, list) else values
-        try: timedelta = parsetimedelta(value)
+        try: timedelta = parsetimedelta(value, self.dest)
         except ValueError: self.raiseArgumentError('timedelta', values)
-        else: self.append(namespace, timedelta)
+        else: setattr(namespace, self.dest, timedelta)
 
 
 class ParseDateTime(argparse.Action, TimeArgsMixin, DeprecationClasses):
@@ -753,16 +755,16 @@ class ParseDateTime(argparse.Action, TimeArgsMixin, DeprecationClasses):
     Like ParseDatetime with support for multiple use of arguments.
     """
     def __call__(self, parser, namespace, values, option_string=None):
-        raise DeprecationWarning(self.MSG % (
+        warnings.warn(self.MSG % (
             'timeparse.ParseDateTime',
             'timeparse.ParseDatetime'
-            ))
+            ), DeprecationWarning)
         values = values if isinstance(values, list) else [values]
         try:
             if len(values) == 2: datetime = self.combine_datetime(*values)
             else: datetime = parsedatetime(' '.join(values))
         except ValueError: self.raiseArgumentError('datetime', values)
-        else: self.append(namespace, datetime)
+        else: setattr(namespace, self.dest, datetime)
 
 
 class ParseDateTimeOrTime(argparse.Action, TimeArgsMixin, DeprecationClasses):
@@ -770,14 +772,14 @@ class ParseDateTimeOrTime(argparse.Action, TimeArgsMixin, DeprecationClasses):
     Like ParseTimeOrDatetime with support for multiple use of arguments.
     """
     def __call__(self, parser, namespace, values, option_string=None):
-        raise DeprecationWarning(self.MSG % (
+        warnings.warn(self.MSG % (
             'timeparse.ParseDateTimeOrTime',
             'timeparse.ParseTimeOrDatetime'
-            ))
+            ), DeprecationWarning)
         values = values if isinstance(values, list) else [values]
         try: obj = self.time_or_datetime(values)
         except ValueError: self.raiseArgumentError('time or datetime', values)
-        else: self.append(namespace, obj)
+        else: setattr(namespace, self.dest, obj)
 
 
 class AppendTimeDelta(argparse.Action, TimeArgsMixin, DeprecationClasses):
@@ -785,10 +787,10 @@ class AppendTimeDelta(argparse.Action, TimeArgsMixin, DeprecationClasses):
     Like ParseTimedelta with support for multiple use of arguments.
     """
     def __call__(self, parser, namespace, values, option_string=None):
-        raise DeprecationWarning(self.MSG % (
+        warnings.warn(self.MSG % (
             'timeparse.AppendTimeDelta',
             'timeparse.AppendTimedelta'
-            ))
+            ), DeprecationWarning)
         value = ' '.join(values) if isinstance(values, list) else values
         try: timedelta = parsetimedelta(value)
         except ValueError: self.raiseArgumentError('timedelta', values)
@@ -800,10 +802,10 @@ class AppendDateTime(argparse.Action, TimeArgsMixin, DeprecationClasses):
     Like ParseDatetime with support for multiple use of arguments.
     """
     def __call__(self, parser, namespace, values, option_string=None):
-        raise DeprecationWarning(self.MSG % (
+        warnings.warn(self.MSG % (
             'timeparse.AppendDateTime',
             'timeparse.AppendDatetime'
-            ))
+            ), DeprecationWarning)
         values = values if isinstance(values, list) else [values]
         try:
             if len(values) == 2: datetime = self.combine_datetime(*values)
@@ -817,10 +819,10 @@ class AppendDateTimeOrTime(argparse.Action, TimeArgsMixin, DeprecationClasses):
     Like ParseTimeOrDatetime with support for multiple use of arguments.
     """
     def __call__(self, parser, namespace, values, option_string=None):
-        raise DeprecationWarning(self.MSG % (
+        warnings.warn(self.MSG % (
             'timeparse.AppendDateTimeOrTime',
             'timeparse.AppendTimeOrDatetime'
-            ))
+            ), DeprecationWarning)
         values = values if isinstance(values, list) else [values]
         try: obj = self.time_or_datetime(values)
         except ValueError: self.raiseArgumentError('time or datetime', values)
