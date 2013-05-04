@@ -728,5 +728,104 @@ class AppendTimeOrDatetime(argparse.Action, TimeArgsMixin):
         else: self.append(namespace, obj)
 
 
+#These classes are for backward-compatibility:
+
+class DeprecationClasses:
+    MSG = "%s is deprecated. Use %s instead."
+
+class ParseTimeDelta(argparse.Action, TimeArgsMixin, DeprecationClasses):
+    """
+    Like ParseTimedelta with support for multiple use of arguments.
+    """
+    def __call__(self, parser, namespace, values, option_string=None):
+        raise DeprecationWarning(self.MSG % (
+            'timeparse.ParseTimeDelta',
+            'timeparse.ParseTimedelta'
+            ))
+        value = ' '.join(values) if isinstance(values, list) else values
+        try: timedelta = parsetimedelta(value)
+        except ValueError: self.raiseArgumentError('timedelta', values)
+        else: self.append(namespace, timedelta)
+
+
+class ParseDateTime(argparse.Action, TimeArgsMixin, DeprecationClasses):
+    """
+    Like ParseDatetime with support for multiple use of arguments.
+    """
+    def __call__(self, parser, namespace, values, option_string=None):
+        raise DeprecationWarning(self.MSG % (
+            'timeparse.ParseDateTime',
+            'timeparse.ParseDatetime'
+            ))
+        values = values if isinstance(values, list) else [values]
+        try:
+            if len(values) == 2: datetime = self.combine_datetime(*values)
+            else: datetime = parsedatetime(' '.join(values))
+        except ValueError: self.raiseArgumentError('datetime', values)
+        else: self.append(namespace, datetime)
+
+
+class ParseDateTimeOrTime(argparse.Action, TimeArgsMixin, DeprecationClasses):
+    """
+    Like ParseTimeOrDatetime with support for multiple use of arguments.
+    """
+    def __call__(self, parser, namespace, values, option_string=None):
+        raise DeprecationWarning(self.MSG % (
+            'timeparse.ParseDateTimeOrTime',
+            'timeparse.ParseTimeOrDatetime'
+            ))
+        values = values if isinstance(values, list) else [values]
+        try: obj = self.time_or_datetime(values)
+        except ValueError: self.raiseArgumentError('time or datetime', values)
+        else: self.append(namespace, obj)
+
+
+class AppendTimeDelta(argparse.Action, TimeArgsMixin, DeprecationClasses):
+    """
+    Like ParseTimedelta with support for multiple use of arguments.
+    """
+    def __call__(self, parser, namespace, values, option_string=None):
+        raise DeprecationWarning(self.MSG % (
+            'timeparse.AppendTimeDelta',
+            'timeparse.AppendTimedelta'
+            ))
+        value = ' '.join(values) if isinstance(values, list) else values
+        try: timedelta = parsetimedelta(value)
+        except ValueError: self.raiseArgumentError('timedelta', values)
+        else: self.append(namespace, timedelta)
+
+
+class AppendDateTime(argparse.Action, TimeArgsMixin, DeprecationClasses):
+    """
+    Like ParseDatetime with support for multiple use of arguments.
+    """
+    def __call__(self, parser, namespace, values, option_string=None):
+        raise DeprecationWarning(self.MSG % (
+            'timeparse.AppendDateTime',
+            'timeparse.AppendDatetime'
+            ))
+        values = values if isinstance(values, list) else [values]
+        try:
+            if len(values) == 2: datetime = self.combine_datetime(*values)
+            else: datetime = parsedatetime(' '.join(values))
+        except ValueError: self.raiseArgumentError('datetime', values)
+        else: self.append(namespace, datetime)
+
+
+class AppendDateTimeOrTime(argparse.Action, TimeArgsMixin, DeprecationClasses):
+    """
+    Like ParseTimeOrDatetime with support for multiple use of arguments.
+    """
+    def __call__(self, parser, namespace, values, option_string=None):
+        raise DeprecationWarning(self.MSG % (
+            'timeparse.AppendDateTimeOrTime',
+            'timeparse.AppendTimeOrDatetime'
+            ))
+        values = values if isinstance(values, list) else [values]
+        try: obj = self.time_or_datetime(values)
+        except ValueError: self.raiseArgumentError('time or datetime', values)
+        else: self.append(namespace, obj)
+
+
 
 

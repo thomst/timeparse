@@ -5,12 +5,6 @@ import argparse
 
 from argparse import ArgumentError
 
-from timeparse import AppendTimeOrDatetime
-from timeparse import ParseTimeOrDatetime
-from timeparse import ParseDatetime
-from timeparse import ParseTimedelta
-from timeparse import ParseDate
-from timeparse import ParseTime
 
 
 class ParserTests(unittest.TestCase):
@@ -79,7 +73,7 @@ class TestTimeParser(unittest.TestCase):
     def test_ParseTimedelta(self):
         self.parser.add_argument(
             '--weeks',
-            action=ParseTimedelta,
+            action=timeparse.ParseTimedelta,
             nargs='+',
             )
         self.assertEqual(datetime.timedelta(weeks=-20, hours=-4), self.parser.parse_args('--weeks -20 0 -4'.split()).weeks)
@@ -88,7 +82,7 @@ class TestTimeParser(unittest.TestCase):
     def test_ParseTime(self):
         self.parser.add_argument(
             '--time',
-            action=ParseTime,
+            action=timeparse.ParseTime,
             nargs='+',
             )
         self.assertEqual(datetime.time(10, 45, 22), self.parser.parse_args('--time 104522'.split()).time)
@@ -96,7 +90,7 @@ class TestTimeParser(unittest.TestCase):
     def test_ParseDate(self):
         self.parser.add_argument(
             '--date',
-            action=ParseDate,
+            action=timeparse.ParseDate,
             )
         today = timeparse.TODAY
         self.assertEqual(datetime.date(today.year, today.month, 23), self.parser.parse_args('--date 23'.split()).date)
@@ -107,7 +101,7 @@ class TestTimeParser(unittest.TestCase):
     def test_ParseDatetime(self):
         self.parser.add_argument(
             '--datetime',
-            action=ParseDatetime,
+            action=timeparse.ParseDatetime,
             nargs='+',
             )
         self.assertEqual(
@@ -115,10 +109,10 @@ class TestTimeParser(unittest.TestCase):
             self.parser.parse_args('--datetime 22.4 220316'.split()).datetime
             )
 
-    def test_ParseDatetimeOrTime(self):
+    def test_ParseTimeOrDatetime(self):
         self.parser.add_argument(
             '--datetime',
-            action=ParseTimeOrDatetime,
+            action=timeparse.ParseTimeOrDatetime,
             nargs='+',
             )
         self.assertEqual(
@@ -130,16 +124,48 @@ class TestTimeParser(unittest.TestCase):
             self.parser.parse_args('--datetime 220316'.split()).datetime
             )
 
-    def test_AppendDatetimeOrTime(self):
+    def test_AppendTimeOrDatetime(self):
         self.parser.add_argument(
             '--datetime',
-            action=AppendTimeOrDatetime,
+            action=timeparse.AppendTimeOrDatetime,
             nargs='+',
             )
         self.assertEqual(
             [datetime.time(22, 3, 16), datetime.time(13, 3)],
             self.parser.parse_args('--datetime 220316 --datetime 1303'.split()).datetime
             )
+
+    def test_ParseTimeDelta(self):
+        self.parser.add_argument(
+            '--weeks',
+            action=timeparse.ParseTimeDelta,
+            nargs='+',
+            )
+        self.assertRaises(DeprecationWarning, self.parser.parse_args, ('--weeks -20 0 -4'.split()))
+
+    def test_ParseDateTime(self):
+        self.parser.add_argument(
+            '--datetime',
+            action=timeparse.ParseDateTime,
+            nargs='+',
+            )
+        self.assertRaises(DeprecationWarning, self.parser.parse_args, ('--datetime 22.4 220316'.split()))
+
+    def test_ParseDateTimeOrTime(self):
+        self.parser.add_argument(
+            '--datetime',
+            action=timeparse.ParseDateTimeOrTime,
+            nargs='+',
+            )
+        self.assertRaises(DeprecationWarning, self.parser.parse_args, ('--datetime 22.4 220316'.split()))
+
+    def test_AppendDateTimeOrTime(self):
+        self.parser.add_argument(
+            '--datetime',
+            action=timeparse.AppendDateTimeOrTime,
+            nargs='+',
+            )
+        self.assertRaises(DeprecationWarning, self.parser.parse_args, ('--datetime 220316 --datetime 1303'.split()))
 
 
 if __name__ == '__main__':
