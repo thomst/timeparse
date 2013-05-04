@@ -97,8 +97,9 @@ class TestTimeParser(unittest.TestCase):
         self.parser.add_argument(
             '--date',
             action=ParseDate,
-            nargs='+',
             )
+        today = timeparse.TODAY
+        self.assertEqual(datetime.date(today.year, today.month, 23), self.parser.parse_args('--date 23'.split()).date)
         self.assertEqual(datetime.date(2013, 4, 22), self.parser.parse_args('--date 22.4.13'.split()).date)
         self.assertEqual(datetime.date(2013, 4, 22), self.parser.parse_args('--date 220413'.split()).date)
         self.assertEqual(datetime.date(2013, 4, 22), self.parser.parse_args('--date 22042013'.split()).date)

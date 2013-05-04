@@ -544,7 +544,7 @@ class ParseTime(argparse.Action, TimeArgsMixin):
         #this will be: datetime.time(23, 20, 33)
     """
     def __call__(self, parser, namespace, values, option_string=None):
-        value = ' '.join(values)
+        value = ' '.join(values) if isinstance(values, list) else values
         try: time = parsetime(value)
         except ValueError: self.raiseArgumentError('time', values)
         else: setattr(namespace, self.dest, time)
@@ -566,7 +566,7 @@ class ParseDate(argparse.Action, TimeArgsMixin):
         #this will be: datetime.date(2013, 4, 24)
     """
     def __call__(self, parser, namespace, values, option_string=None):
-        value = ' '.join(values)
+        value = ' '.join(values) if isinstance(values, list) else values
         try: date = parsedate(value)
         except ValueError: self.raiseArgumentError('date', values)
         else: setattr(namespace, self.dest, date)
@@ -592,7 +592,7 @@ class ParseTimedelta(argparse.Action, TimeArgsMixin):
     above the values 20, 12 and 4 are interpreted as 20 days, 12 hours and 4 min.
     """
     def __call__(self, parser, namespace, values, option_string=None):
-        value = ' '.join(values)
+        value = ' '.join(values) if isinstance(values, list) else values
         try: timedelta = parsetimedelta(value, self.dest)
         except ValueError: self.raiseArgumentError('timedelta', values)
         else: setattr(namespace, self.dest, timedelta)
@@ -614,6 +614,7 @@ class ParseDatetime(argparse.Action, TimeArgsMixin):
         #this will be: datetime.datetime(2013, 4, 24, 23, 22)
     """
     def __call__(self, parser, namespace, values, option_string=None):
+        values = values if isinstance(values, list) else [values]
         try:
             if len(values) == 2: datetime = self.combine_datetime(*values)
             else: datetime = parsedatetime(' '.join(values))
@@ -640,6 +641,7 @@ class ParseTimeOrDatetime(argparse.Action, TimeArgsMixin):
         #and this will just be: datetime.time(23, 22)
     """
     def __call__(self, parser, namespace, values, option_string=None):
+        values = values if isinstance(values, list) else [values]
         try: obj = self.time_or_datetime(values)
         except ValueError: self.raiseArgumentError('time or datetime', values)
         else: setattr(namespace, self.dest, obj)
@@ -662,7 +664,7 @@ class AppendTime(argparse.Action, TimeArgsMixin):
         #this will be: [datetime.time(23, 20, 33), datetime.time(22, 20)]
     """
     def __call__(self, parser, namespace, values, option_string=None):
-        value = ' '.join(values)
+        value = ' '.join(values) if isinstance(values, list) else values
         try: time = parsetime(value)
         except ValueError: self.raiseArgumentError('time', values)
         else: self.append(namespace, time)
@@ -685,7 +687,7 @@ class AppendDate(argparse.Action, TimeArgsMixin):
         #this will be: [datetime.date(2013, 4, 23), datetime.date(2013, 4, 24)]
     """
     def __call__(self, parser, namespace, values, option_string=None):
-        value = ' '.join(values)
+        value = ' '.join(values) if isinstance(values, list) else values
         try: date = parsedate(value)
         except ValueError: self.raiseArgumentError('date', values)
         else: self.append(namespace, date)
@@ -696,7 +698,7 @@ class AppendTimedelta(argparse.Action, TimeArgsMixin):
     Like ParseTimedelta with support for multiple use of arguments.
     """
     def __call__(self, parser, namespace, values, option_string=None):
-        value = ' '.join(values)
+        value = ' '.join(values) if isinstance(values, list) else values
         try: timedelta = parsetimedelta(value)
         except ValueError: self.raiseArgumentError('timedelta', values)
         else: self.append(namespace, timedelta)
@@ -707,6 +709,7 @@ class AppendDatetime(argparse.Action, TimeArgsMixin):
     Like ParseDatetime with support for multiple use of arguments.
     """
     def __call__(self, parser, namespace, values, option_string=None):
+        values = values if isinstance(values, list) else [values]
         try:
             if len(values) == 2: datetime = self.combine_datetime(*values)
             else: datetime = parsedatetime(' '.join(values))
@@ -719,6 +722,7 @@ class AppendTimeOrDatetime(argparse.Action, TimeArgsMixin):
     Like ParseTimeOrDatetime with support for multiple use of arguments.
     """
     def __call__(self, parser, namespace, values, option_string=None):
+        values = values if isinstance(values, list) else [values]
         try: obj = self.time_or_datetime(values)
         except ValueError: self.raiseArgumentError('time or datetime', values)
         else: self.append(namespace, obj)
