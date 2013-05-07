@@ -5,6 +5,7 @@ import argparse
 
 from argparse import ArgumentError
 
+timeparse.set_endian('little')
 
 class TestTimeParser(unittest.TestCase):
     def setUp(self):
@@ -36,10 +37,10 @@ class TestTimeParser(unittest.TestCase):
             '--date',
             action=timeparse.ParseDate,
             )
-        timeparse.set_today(datetime.date(1,2,3))
-        today = timeparse.get_today()
+        timeparse.set_today(1,2,3)
+        today = timeparse.timeparser.TODAY
         self.assertEqual(datetime.date(today.year, today.month, 23), self.parser.parse_args('--date 23'.split()).date)
-        timeparse.set_today(datetime.date.today())
+        timeparse.set_today()
 
         self.assertEqual(datetime.date(2013, 4, 22), self.parser.parse_args('--date 22.4.13'.split()).date)
         self.assertEqual(datetime.date(2013, 4, 22), self.parser.parse_args('--date 220413'.split()).date)

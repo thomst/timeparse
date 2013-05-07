@@ -12,26 +12,27 @@ import warnings
 warnings.simplefilter('default')
 
 
-LITTLE_ENDIAN = 10
-BIG_ENDIAN = 20
-MIDDLE_ENDIAN = 30
-
-def set_today(date):
+def set_endian(*args, **kwargs):
     """
-    Calls timeparser.setToday.
+    Calls timeparser.ENDIAN.set.
     
     Args:
-        date (datetime.date-obj):  new date for TODAY
+        key (string):   everything that matches 'little', 'big' or 'middle'
 
-    Raises TypeError if date is not a datetime.date-instance.
+    If key is None the local-default-order is guessed.
     """
-    timeparser.setToday(date)
+    timeparser.ENDIAN.set(*args, **kwargs)
 
-def get_today():
+def set_today(*args, **kwargs):
     """
-    Returns timeparser.TODAY.
+    Calls timeparser.TODAY.set.
+    
+    Args:
+        year (int):     year
+        month (int):    month
+        day (int):      day
     """
-    return timeparser.TODAY
+    timeparser.TODAY.set(*args, **kwargs)
 
 def time_config(*args, **kwargs):
     """
@@ -58,14 +59,6 @@ def date_config(*args, **kwargs):
         allow_no_sep (bool):    allows formats without separators ('%d%m%y')
         allow_month_name (bool):    if True also '%b' and '%B' are used to
                                     produce formats.
-        endian (int):               determines the order for dates (s.a.)
-
-    Endianness is the order in which day, month and year constitutes a date.
-    This module defines three constants:
-    LITTLE_ENDIAN (little first):   day, month, year
-    BIG_ENDIAN (biggest first):     year, month, day
-    MIDDLE_ENDIAN (middle first):   month, day, year
-    Use one of these constants as value for the endian-parameter.
     """
     timeparser.DateFormats.config(*args, **kwargs)
 
