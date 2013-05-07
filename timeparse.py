@@ -1,6 +1,7 @@
 """
 Parse strings to time-, date-, datetime- or timedelta-objects of the datetime-module.
 """
+import warnings
 import datetime
 import re
 import subprocess
@@ -8,7 +9,8 @@ import shlex
 import argparse
 import timeparser
 
-import warnings
+from argparse import ArgumentError
+
 warnings.simplefilter('default')
 
 
@@ -74,6 +76,8 @@ def datetime_config(*args, **kwargs):
 
 
 class TimeArgsMixin:
+    ERR = "'%s' couldn't be parsed as %s"
+
     def combine_datetime(self, datestring, timestring):
         date = timeparser.parsedate(datestring)
         time = timeparser.parsetime(timestring)
@@ -89,13 +93,6 @@ class TimeArgsMixin:
             getattr(namespace, self.dest).append(obj)
         else:
             setattr(namespace, self.dest, [obj])
-
-    #TODO: use cls.ERR_MSG and raise it on place
-    def raiseArgumentError(self, which, args):
-        raise argparse.ArgumentError(
-            self,
-            "'%s' couldn't be parsed as %s" % (' '.join(args), which)
-            )
 
 
 
@@ -117,7 +114,7 @@ class ParseTime(argparse.Action, TimeArgsMixin):
     def __call__(self, parser, namespace, values, option_string=None):
         value = ' '.join(values) if isinstance(values, list) else values
         try: time = timeparser.parsetime(value)
-        except ValueError: self.raiseArgumentError('time', values)
+        except ValueError: raise ArgumentError(self, self.ERR % (values, 'time'))
         else: setattr(namespace, self.dest, time)
 
 
@@ -137,9 +134,11 @@ class ParseDate(argparse.Action, TimeArgsMixin):
         #this will be: datetime.date(2013, 4, 24)
     """
     def __call__(self, parser, namespace, values, option_string=None):
+        print values
         value = ' '.join(values) if isinstance(values, list) else values
+        print values
         try: date = timeparser.parsedate(value)
-        except ValueError: self.raiseArgumentError('date', values)
+        except ValueError: raise ArgumentError(self, self.ERR % (values, 'date'))
         else: setattr(namespace, self.dest, date)
 
 
@@ -165,7 +164,8 @@ class ParseTimedelta(argparse.Action, TimeArgsMixin):
     def __call__(self, parser, namespace, values, option_string=None):
         value = ' '.join(values) if isinstance(values, list) else values
         try: timedelta = timeparser.parsetimedelta(value, self.dest)
-        except ValueError: self.raiseArgumentError('timedelta', values)
+        except ValueError:
+            raise ArgumentError(self, self.ERR % (values, 'timedelta'))
         else: setattr(namespace, self.dest, timedelta)
 
 
@@ -189,7 +189,8 @@ class ParseDatetime(argparse.Action, TimeArgsMixin):
         try:
             if len(values) == 2: datetime = self.combine_datetime(*values)
             else: datetime = timeparser.parsedatetime(' '.join(values))
-        except ValueError: self.raiseArgumentError('datetime', values)
+        except ValueError:
+            raise ArgumentError(self, self.ERR % (values, 'datetime'))
         else: setattr(namespace, self.dest, datetime)
 
 
@@ -214,7 +215,8 @@ class ParseTimeOrDatetime(argparse.Action, TimeArgsMixin):
     def __call__(self, parser, namespace, values, option_string=None):
         values = values if isinstance(values, list) else [values]
         try: obj = self.time_or_datetime(values)
-        except ValueError: self.raiseArgumentError('time or datetime', values)
+        except ValueError:
+            raise ArgumentError(self, self.ERR % (values, 'time or datetime'))
         else: setattr(namespace, self.dest, obj)
 
 
@@ -237,7 +239,7 @@ class AppendTime(argparse.Action, TimeArgsMixin):
     def __call__(self, parser, namespace, values, option_string=None):
         value = ' '.join(values) if isinstance(values, list) else values
         try: time = timeparser.parsetime(value)
-        except ValueError: self.raiseArgumentError('time', values)
+        except ValueError: raise ArgumentError(self, self.ERR % (values, 'time'))
         else: self.append(namespace, time)
 
 
@@ -260,7 +262,7 @@ class AppendDate(argparse.Action, TimeArgsMixin):
     def __call__(self, parser, namespace, values, option_string=None):
         value = ' '.join(values) if isinstance(values, list) else values
         try: date = timeparser.parsedate(value)
-        except ValueError: self.raiseArgumentError('date', values)
+        except ValueError: raise ArgumentError(self, self.ERR % (values, 'date'))
         else: self.append(namespace, date)
 
 
@@ -271,7 +273,8 @@ class AppendTimedelta(argparse.Action, TimeArgsMixin):
     def __call__(self, parser, namespace, values, option_string=None):
         value = ' '.join(values) if isinstance(values, list) else values
         try: timedelta = timeparser.parsetimedelta(value)
-        except ValueError: self.raiseArgumentError('timedelta', values)
+        except ValueError:
+            raise ArgumentError(self, self.ERR % (values, 'timedelta'))
         else: self.append(namespace, timedelta)
 
 
@@ -284,7 +287,8 @@ class AppendDatetime(argparse.Action, TimeArgsMixin):
         try:
             if len(values) == 2: datetime = self.combine_datetime(*values)
             else: datetime = timeparser.parsedatetime(' '.join(values))
-        except ValueError: self.raiseArgumentError('datetime', values)
+        except ValueError:
+            raise ArgumentError(self, self.ERR % (values, 'datetime'))
         else: self.append(namespace, datetime)
 
 
@@ -295,7 +299,8 @@ class AppendTimeOrDatetime(argparse.Action, TimeArgsMixin):
     def __call__(self, parser, namespace, values, option_string=None):
         values = values if isinstance(values, list) else [values]
         try: obj = self.time_or_datetime(values)
-        except ValueError: self.raiseArgumentError('time or datetime', values)
+        except ValueError:
+            raise ArgumentError(self, self.ERR % (values, 'time or datetime'))
         else: self.append(namespace, obj)
 
 
@@ -315,7 +320,8 @@ class ParseTimeDelta(argparse.Action, TimeArgsMixin, DeprecationClasses):
             ), DeprecationWarning)
         value = ' '.join(values) if isinstance(values, list) else values
         try: timedelta = timeparser.parsetimedelta(value, self.dest)
-        except ValueError: self.raiseArgumentError('timedelta', values)
+        except ValueError:
+            raise ArgumentError(self, self.ERR % (values, 'timedelta'))
         else: setattr(namespace, self.dest, timedelta)
 
 
@@ -332,7 +338,8 @@ class ParseDateTime(argparse.Action, TimeArgsMixin, DeprecationClasses):
         try:
             if len(values) == 2: datetime = self.combine_datetime(*values)
             else: datetime = timeparser.parsedatetime(' '.join(values))
-        except ValueError: self.raiseArgumentError('datetime', values)
+        except ValueError:
+            raise ArgumentError(self, self.ERR % (values, 'datetime'))
         else: setattr(namespace, self.dest, datetime)
 
 
@@ -347,7 +354,8 @@ class ParseDateTimeOrTime(argparse.Action, TimeArgsMixin, DeprecationClasses):
             ), DeprecationWarning)
         values = values if isinstance(values, list) else [values]
         try: obj = self.time_or_datetime(values)
-        except ValueError: self.raiseArgumentError('time or datetime', values)
+        except ValueError:
+            raise ArgumentError(self, self.ERR % (values, 'time or datetime'))
         else: setattr(namespace, self.dest, obj)
 
 
@@ -362,7 +370,8 @@ class AppendTimeDelta(argparse.Action, TimeArgsMixin, DeprecationClasses):
             ), DeprecationWarning)
         value = ' '.join(values) if isinstance(values, list) else values
         try: timedelta = timeparser.parsetimedelta(value)
-        except ValueError: self.raiseArgumentError('timedelta', values)
+        except ValueError:
+            raise ArgumentError(self, self.ERR % (values, 'timedelta'))
         else: self.append(namespace, timedelta)
 
 
@@ -379,7 +388,8 @@ class AppendDateTime(argparse.Action, TimeArgsMixin, DeprecationClasses):
         try:
             if len(values) == 2: datetime = self.combine_datetime(*values)
             else: datetime = timeparser.parsedatetime(' '.join(values))
-        except ValueError: self.raiseArgumentError('datetime', values)
+        except ValueError:
+            raise ArgumentError(self, self.ERR % (values, 'datetime'))
         else: self.append(namespace, datetime)
 
 
@@ -394,7 +404,8 @@ class AppendDateTimeOrTime(argparse.Action, TimeArgsMixin, DeprecationClasses):
             ), DeprecationWarning)
         values = values if isinstance(values, list) else [values]
         try: obj = self.time_or_datetime(values)
-        except ValueError: self.raiseArgumentError('time or datetime', values)
+        except ValueError:
+            raise ArgumentError(self, self.ERR % (values, 'time or datetime'))
         else: self.append(namespace, obj)
 
 
