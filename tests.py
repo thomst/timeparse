@@ -2,10 +2,11 @@ import unittest
 import datetime
 import timeparse
 import argparse
+import timeparser
 
 from argparse import ArgumentError
 
-timeparse.set_endian('little')
+timeparser.ENDIAN.set('little')
 
 class TestTimeParser(unittest.TestCase):
     def setUp(self):
@@ -26,10 +27,10 @@ class TestTimeParser(unittest.TestCase):
             action=timeparse.ParseTime,
             nargs='+',
             )
-        timeparse.time_config(allow_no_sep=False)
+        timeparser.TimeFormats.config(allow_no_sep=False)
         self.assertRaises(SystemExit, self.parser.parse_args, ('--time 104522'.split()))
 
-        timeparse.time_config(allow_no_sep=True)
+        timeparser.TimeFormats.config(allow_no_sep=True)
         self.assertEqual(datetime.time(10, 45, 22), self.parser.parse_args('--time 104522'.split()).time)
 
     def test_ParseDate(self):
@@ -37,10 +38,10 @@ class TestTimeParser(unittest.TestCase):
             '--date',
             action=timeparse.ParseDate,
             )
-        timeparse.set_today(1,2,3)
+        timeparser.TODAY.set(1,2,3)
         today = timeparse.timeparser.TODAY
         self.assertEqual(datetime.date(today.year, today.month, 23), self.parser.parse_args('--date 23'.split()).date)
-        timeparse.set_today()
+        timeparser.TODAY.set()
 
         self.assertEqual(datetime.date(2013, 4, 22), self.parser.parse_args('--date 22.4.13'.split()).date)
         self.assertEqual(datetime.date(2013, 4, 22), self.parser.parse_args('--date 220413'.split()).date)

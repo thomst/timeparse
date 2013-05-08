@@ -12,7 +12,7 @@ import timeparser
 from argparse import ArgumentError
 
 warnings.simplefilter('default')
-
+deprecated = "'%s' is deprecated; use '%s' instead"
 
 def set_endian(*args, **kwargs):
     """
@@ -23,6 +23,10 @@ def set_endian(*args, **kwargs):
 
     If key is None the local-default-order is guessed.
     """
+    warnings.warn(
+        deprecated % ('set_endian', 'timeparser.ENDIAN.set'),
+        DeprecationWarning
+        )
     timeparser.ENDIAN.set(*args, **kwargs)
 
 def set_today(*args, **kwargs):
@@ -34,6 +38,10 @@ def set_today(*args, **kwargs):
         month (int):    month
         day (int):      day
     """
+    warnings.warn(
+        deprecated % ('set_today', 'timeparser.TODAY.set'),
+        DeprecationWarning
+        )
     timeparser.TODAY.set(*args, **kwargs)
 
 def time_config(*args, **kwargs):
@@ -48,6 +56,10 @@ def time_config(*args, **kwargs):
         microsec (bool):    if True also formats with '%f' for microseconds
                             are produced.
     """
+    warnings.warn(
+        deprecated % ('time_config', 'timeparser.TimeFormats.config'),
+        DeprecationWarning
+        )
     timeparser.TimeFormats.config(*args, **kwargs)
 
 def date_config(*args, **kwargs):
@@ -62,6 +74,10 @@ def date_config(*args, **kwargs):
         allow_month_name (bool):    if True also '%b' and '%B' are used to
                                     produce formats.
     """
+    warnings.warn(
+        deprecated % ('date_config', 'timeparser.DateFormats.config'),
+        DeprecationWarning
+        )
     timeparser.DateFormats.config(*args, **kwargs)
 
 def datetime_config(*args, **kwargs):
@@ -72,6 +88,10 @@ def datetime_config(*args, **kwargs):
         seps (list):        separators formats are generated with
         allow_no_sep (bool):    allows formats without separators ('%d%m%y')
     """
+    warnings.warn(
+        deprecated % ('datetime_config', 'timeparser.DatetimeFormats.config'),
+        DeprecationWarning
+        )
     timeparser.DatetimeFormats.config(*args, **kwargs)
 
 
@@ -134,9 +154,7 @@ class ParseDate(argparse.Action, TimeArgsMixin):
         #this will be: datetime.date(2013, 4, 24)
     """
     def __call__(self, parser, namespace, values, option_string=None):
-        print values
         value = ' '.join(values) if isinstance(values, list) else values
-        print values
         try: date = timeparser.parsedate(value)
         except ValueError: raise ArgumentError(self, self.ERR % (values, 'date'))
         else: setattr(namespace, self.dest, date)
@@ -157,7 +175,7 @@ class ParseTimedelta(argparse.Action, TimeArgsMixin):
         parser.parse_args('--days 20 12 4'.split()).days
         #this will be: datetime.timedelta(20, 43440).
 
-    The dest-property of argparse.Action (which is mostly the literal part of
+    The dest-property of argparse.Action (which is by default the literal part of
     the option-string) is passed to parsetimedelta as key. So that in the exemple
     above the values 20, 12 and 4 are interpreted as 20 days, 12 hours and 4 min.
     """
