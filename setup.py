@@ -1,7 +1,9 @@
 import os
 from distutils.core import setup
 
-VERSION = "0.4.2"
+import timeparse
+
+VERSION = timeparse.__version__
 
 setup(
     name = "timeparse", 
