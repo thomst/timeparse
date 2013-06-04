@@ -20,7 +20,7 @@ Installation
     python setup.py install
 
 
-Documentation
+Usage
 -------------
 How to use? ::
 
