@@ -20,6 +20,12 @@ Installation
     python setup.py install
 
 
+Dokumentaion:
+-------------
+Please visit the documentation on readthedocs.org:
+https://timeparse.readthedocs.org/en/latest/index.html
+
+
 Usage
 -------------
 How to use? ::
