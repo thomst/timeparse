@@ -12,7 +12,7 @@ import timeparser
 
 from argparse import ArgumentError
 
-__version__ = '0.5.0'
+__version__ = '0.5.1'
 
 
 class TimeArgsMixin:
@@ -96,20 +96,30 @@ class ParseTimedelta(argparse.Action, TimeArgsMixin):
         >>> parser = argparse.ArgumentParser(prog='PROG')
         >>> parser.add_argument(
         ... '--days',
+        ... nargs='+',
         ... action=timeparse.ParseTimedelta
         ... )
         >>> parser.parse_args('--days 20 12 4'.split()).days
         datetime.timedelta(20, 43440)
 
-    The dest-property of argparse.Action (which is by default the literal part of
-    the option-string) is passed to parsetimedelta as key. So that in the exemple
-    above the values 20, 12 and 4 are interpreted as 20 days, 12 hours and 4 min.
+        >>> parser.parse_args('--days 20h 12m 4s'.split()).days
+        datetime.timedelta(20, 72724)
+
+    If the dest-property of argparse.Action (which is by default the literal part
+    of the option-string) matches one of the kwargs accepted by
+    :class:`datetime.timedelta` the values are interpreted starting with this
+    unit with the next lesser unit following.
+    If the values could be flagged with some letters matching those kwargs.
+    In the first exemple above the values are interpreted as 20 days, 12 hours
+    and 4 min. In the second one as 20 hours, 12 minutes and 4 seconds.
     """
     def __call__(self, parser, namespace, values, option_string=None):
         value = ' '.join(values) if isinstance(values, list) else values
-        try: timedelta = timeparser.parsetimedelta(value, self.dest)
+        kwords = ('weeks', 'days', 'hours', 'minutes', 'seconds')
+        key = map(lambda k: k if re.match(self.dest, k) else 'days', kwords)[0]
+        try: timedelta = timeparser.parsetimedelta(value, key)
         except ValueError:
-            raise ArgumentError(self, self.ERR % (values, 'timedelta'))
+            raise ArgumentError(self, self.ERR % (value, 'timedelta'))
         else: setattr(namespace, self.dest, timedelta)
 
 
@@ -125,6 +135,7 @@ class ParseDatetime(argparse.Action, TimeArgsMixin):
         >>> parser = argparse.ArgumentParser(prog='PROG')
         >>> parser.add_argument(
         ... '--datetime',
+        ... nargs='+',
         ... action=timeparse.ParseDatetime
         ... )
         >>> parser.parse_args('--datetime 24/04/2013 23:22'.split()).datetime
@@ -152,6 +163,7 @@ class ParseTimeOrDatetime(argparse.Action, TimeArgsMixin):
         >>> parser = argparse.ArgumentParser(prog='PROG')
         >>> parser.add_argument(
         ... '--time-or-datetime',
+        ... nargs='+',
         ... action=timeparse.ParseTimeOrDatetime
         ... )
         >>> parser.parse_args('--time-or-datetime 24/04/2013 23:22'.split()).time_or_datetime

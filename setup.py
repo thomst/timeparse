@@ -3,7 +3,7 @@ from distutils.core import setup
 
 #import timeparse
 
-VERSION = '0.5.0'
+VERSION = '0.5.1'
 
 setup(
     name = "timeparse", 

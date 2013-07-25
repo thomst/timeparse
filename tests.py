@@ -21,6 +21,13 @@ class TestTimeParser(unittest.TestCase):
         self.assertEqual(datetime.timedelta(weeks=-20, hours=-4), self.parser.parse_args('--weeks -20 0 -4'.split()).weeks)
         self.assertRaises(SystemExit, self.parser.parse_args, ('--weeks 20h 10 4'.split()))
 
+        self.parser.add_argument(
+            '--plus',
+            action=timeparse.ParseTimedelta,
+            nargs='+',
+            )
+        self.assertEqual(datetime.timedelta(days=-20, minutes=-4), self.parser.parse_args('--plus -20 0 -4'.split()).plus)
+
     def test_ParseTime(self):
         self.parser.add_argument(
             '--time',
