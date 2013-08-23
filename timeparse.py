@@ -13,7 +13,7 @@ from daytime import Daytime
 
 from argparse import ArgumentError
 
-__version__ = '0.5.3'
+__version__ = '0.5.4'
 
 
 class TimeArgsMixin:
@@ -146,7 +146,8 @@ class ParseTimedelta(argparse.Action, TimeArgsMixin):
     def __call__(self, parser, namespace, values, option_string=None):
         value = ' '.join(values) if isinstance(values, list) else values
         kwords = ('weeks', 'days', 'hours', 'minutes', 'seconds')
-        key = map(lambda k: k if re.match(self.dest, k) else 'days', kwords)[0]
+        try: key = [k for k in kwords if k.startswith(self.dest)][0]
+        except KeyError: key = 'days'
         try: timedelta = timeparser.parsetimedelta(value, key)
         except ValueError:
             raise ArgumentError(self, self.ERR % (value, 'timedelta'))
