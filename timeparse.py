@@ -9,10 +9,11 @@ import subprocess
 import shlex
 import argparse
 import timeparser
+from daytime import DayTime
 
 from argparse import ArgumentError
 
-__version__ = '0.5.1'
+__version__ = '0.5.2'
 
 
 class TimeArgsMixin:
@@ -54,10 +55,38 @@ class ParseTime(argparse.Action, TimeArgsMixin):
         datetime.time(23, 20, 33)
     """
     def __call__(self, parser, namespace, values, option_string=None):
-        value = ' '.join(values) if isinstance(values, list) else values
-        try: time = timeparser.parsetime(value)
+        try:
+            if type(values) == str: time = timeparser.parsetime(values)
+            else: time = [timeparser.parsetime(d) for d in values]
         except ValueError: raise ArgumentError(self, self.ERR % (values, 'time'))
         else: setattr(namespace, self.dest, time)
+
+
+class ParseDaytime(argparse.Action, TimeArgsMixin):
+    """
+    Action for :meth:`argparse.ArgumentParser.add_argument` to parse
+    cmdline-parameters as :class:`datetime.time`.
+
+    usage:
+        >>> import argparse
+        >>> import timeparse
+
+        >>> parser = argparse.ArgumentParser(prog='PROG')
+        >>> parser.add_argument(
+        ... '--daytime',
+        ... action=timeparse.ParseDaytime
+        ... )
+        >>> parser.parse_args('--daytime 23:20:33'.split()).daytime
+        DayTime(23, 20, 33)
+    """
+    def __call__(self, parser, namespace, values, option_string=None):
+        try:
+            if type(values) == str:
+                daytime = DayTime.fromtime(timeparser.parsetime(values))
+            else:
+                daytime = [DayTime.fromtime(timeparser.parsetime(d)) for d in values]
+        except ValueError: raise ArgumentError(self, self.ERR % (values, 'daytime'))
+        else: setattr(namespace, self.dest, daytime)
 
 
 class ParseDate(argparse.Action, TimeArgsMixin):
@@ -78,8 +107,9 @@ class ParseDate(argparse.Action, TimeArgsMixin):
         datetime.date(2013, 4, 24)
     """
     def __call__(self, parser, namespace, values, option_string=None):
-        value = ' '.join(values) if isinstance(values, list) else values
-        try: date = timeparser.parsedate(value)
+        try:
+            if type(values) == str: date = timeparser.parsedate(values)
+            else: date = [timeparser.parsedate(d) for d in values]
         except ValueError: raise ArgumentError(self, self.ERR % (values, 'date'))
         else: setattr(namespace, self.dest, date)
 
@@ -103,7 +133,7 @@ class ParseTimedelta(argparse.Action, TimeArgsMixin):
         datetime.timedelta(20, 43440)
 
         >>> parser.parse_args('--days 20h 12m 4s'.split()).days
-        datetime.timedelta(20, 72724)
+        datetime.timedelta(0, 72724)
 
     If the dest-property of argparse.Action (which is by default the literal part
     of the option-string) matches one of the kwargs accepted by
@@ -201,6 +231,29 @@ class AppendTime(argparse.Action, TimeArgsMixin):
         try: time = timeparser.parsetime(value)
         except ValueError: raise ArgumentError(self, self.ERR % (values, 'time'))
         else: self.append(namespace, time)
+
+
+class AppendDaytime(argparse.Action, TimeArgsMixin):
+    """
+    Like :class:`ParseDaytime` with support for multiple use of arguments.
+
+    usage:
+        >>> import argparse
+        >>> import timeparse
+
+        >>> parser = argparse.ArgumentParser(prog='PROG')
+        >>> parser.add_argument(
+        ... '--daytime',
+        ... action=timeparse.AppendDaytime
+        ... )
+        >>> parser.parse_args('--daytime 23:20:33 --daytime 22:20'.split()).daytime
+        [DayTime(23, 20, 33), DayTime(22, 20)]
+    """
+    def __call__(self, parser, namespace, values, option_string=None):
+        value = ' '.join(values) if isinstance(values, list) else values
+        try: daytime = DayTime.fromtime(timeparser.parsetime(values))
+        except ValueError: raise ArgumentError(self, self.ERR % (values, 'daytime'))
+        else: self.append(namespace, daytime)
 
 
 class AppendDate(argparse.Action, TimeArgsMixin):
