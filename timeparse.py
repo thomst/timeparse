@@ -9,11 +9,11 @@ import subprocess
 import shlex
 import argparse
 import timeparser
-from daytime import DayTime
+from daytime import Daytime
 
 from argparse import ArgumentError
 
-__version__ = '0.5.2'
+__version__ = '0.5.3'
 
 
 class TimeArgsMixin:
@@ -77,14 +77,14 @@ class ParseDaytime(argparse.Action, TimeArgsMixin):
         ... action=timeparse.ParseDaytime
         ... )
         >>> parser.parse_args('--daytime 23:20:33'.split()).daytime
-        DayTime(23, 20, 33)
+        Daytime(23, 20, 33)
     """
     def __call__(self, parser, namespace, values, option_string=None):
         try:
             if type(values) == str:
-                daytime = DayTime.fromtime(timeparser.parsetime(values))
+                daytime = Daytime.fromtime(timeparser.parsetime(values))
             else:
-                daytime = [DayTime.fromtime(timeparser.parsetime(d)) for d in values]
+                daytime = [Daytime.fromtime(timeparser.parsetime(d)) for d in values]
         except ValueError: raise ArgumentError(self, self.ERR % (values, 'daytime'))
         else: setattr(namespace, self.dest, daytime)
 
@@ -247,11 +247,11 @@ class AppendDaytime(argparse.Action, TimeArgsMixin):
         ... action=timeparse.AppendDaytime
         ... )
         >>> parser.parse_args('--daytime 23:20:33 --daytime 22:20'.split()).daytime
-        [DayTime(23, 20, 33), DayTime(22, 20)]
+        [Daytime(23, 20, 33), Daytime(22, 20)]
     """
     def __call__(self, parser, namespace, values, option_string=None):
         value = ' '.join(values) if isinstance(values, list) else values
-        try: daytime = DayTime.fromtime(timeparser.parsetime(values))
+        try: daytime = Daytime.fromtime(timeparser.parsetime(values))
         except ValueError: raise ArgumentError(self, self.ERR % (values, 'daytime'))
         else: self.append(namespace, daytime)
 

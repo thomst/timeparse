@@ -32,7 +32,6 @@ class TestTimeParser(unittest.TestCase):
         self.parser.add_argument(
             '--time',
             action=timeparse.ParseTime,
-            nargs='+',
             )
         timeparser.TimeFormats.config(allow_no_sep=False)
         self.assertRaises(SystemExit, self.parser.parse_args, ('--time 104522'.split()))
