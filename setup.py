@@ -1,9 +1,9 @@
 import os
-from setuptools import setup
+from distutils.core import setup
 
 #import timeparse
 
-VERSION = '0.5.4'
+VERSION = '0.5.5'
 
 setup(
     name = "timeparse", 
@@ -15,7 +15,7 @@ setup(
     description = 'An argparse-extension for parsing command-line arguments as time-, date-, datetime-, or timedelta-objects.',
     long_description = open('README.rst').read() if os.path.isfile('README.rst') else str(),
     py_modules = ["timeparse"],
-    install_requires = ['timeparser'],
+    install_requires = ['timeparser', 'daytime'],
     classifiers=[
         'Development Status :: 4 - Beta',
         'Intended Audience :: Developers',

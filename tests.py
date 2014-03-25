@@ -11,6 +11,7 @@ timeparser.ENDIAN.set('little')
 class TestTimeParser(unittest.TestCase):
     def setUp(self):
         self.parser = argparse.ArgumentParser()
+        self.this_year = datetime.date.today().year
 
     def test_ParseTimedelta(self):
         self.parser.add_argument(
@@ -53,9 +54,6 @@ class TestTimeParser(unittest.TestCase):
         self.assertEqual(datetime.date(2013, 4, 22), self.parser.parse_args('--date 220413'.split()).date)
         self.assertEqual(datetime.date(2013, 4, 22), self.parser.parse_args('--date 22042013'.split()).date)
 
-
-
-
     def test_ParseDatetime(self):
         self.parser.add_argument(
             '--datetime',
@@ -63,11 +61,11 @@ class TestTimeParser(unittest.TestCase):
             nargs='+',
             )
         self.assertEqual(
-            datetime.datetime(2013, 4, 22, 22, 3, 16),
+            datetime.datetime(self.this_year, 4, 22, 22, 3, 16),
             self.parser.parse_args('--datetime 22.4_220316'.split()).datetime
             )
         self.assertEqual(
-            datetime.datetime(2013, 4, 22, 22, 3, 16),
+            datetime.datetime(self.this_year, 4, 22, 22, 3, 16),
             self.parser.parse_args('--datetime 22.4 220316'.split()).datetime
             )
 
@@ -78,7 +76,7 @@ class TestTimeParser(unittest.TestCase):
             nargs='+',
             )
         self.assertEqual(
-            datetime.datetime(2013, 4, 22, 22, 3, 16),
+            datetime.datetime(self.this_year, 4, 22, 22, 3, 16),
             self.parser.parse_args('--datetime 22.4 220316'.split()).datetime
             )
         self.assertEqual(
